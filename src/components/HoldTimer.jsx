@@ -1,0 +1,125 @@
+import { useEffect, useReducer, useRef } from 'react'
+import { sounds } from '../sound'
+import { smallBurst } from '../celebrate'
+import Ring from './Ring'
+import RepStars from './RepStars'
+
+const REST_SECONDS = 3
+
+function init({ reps, hold, done }) {
+  return {
+    phase: done ? 'finished' : 'ready', // ready | hold | rest | finished
+    rep: done ? reps : 0,
+    running: false,
+    endAt: 0,
+    left: hold * 1000,
+    reps,
+    hold,
+  }
+}
+
+function reducer(s, action) {
+  switch (action.type) {
+    case 'start': {
+      if (s.phase === 'finished' || s.running) return s
+      const phase = s.phase === 'ready' ? 'hold' : s.phase
+      return { ...s, phase, running: true, endAt: action.now + s.left }
+    }
+    case 'pause':
+      return s.running ? { ...s, running: false, left: Math.max(0, s.endAt - action.now) } : s
+    case 'reset':
+      return init({ reps: s.reps, hold: s.hold, done: false })
+    case 'tick': {
+      if (!s.running) return s
+      const left = s.endAt - action.now
+      if (left > 0) return { ...s, left }
+      if (s.phase === 'hold') {
+        const rep = s.rep + 1
+        if (rep >= s.reps) return { ...s, rep, phase: 'finished', running: false, left: 0 }
+        return { ...s, rep, phase: 'rest', endAt: action.now + REST_SECONDS * 1000, left: REST_SECONDS * 1000 }
+      }
+      // край на почивката – следващото задържане
+      return { ...s, phase: 'hold', endAt: action.now + s.hold * 1000, left: s.hold * 1000 }
+    }
+    default:
+      return s
+  }
+}
+
+export default function HoldTimer({ exercise, done, onComplete }) {
+  const { reps, hold, emoji } = exercise
+  const [s, dispatch] = useReducer(reducer, { reps, hold, done }, init)
+  const lastSecond = useRef(null)
+
+  useEffect(() => {
+    if (!s.running) return
+    const id = setInterval(() => dispatch({ type: 'tick', now: Date.now() }), 50)
+    return () => clearInterval(id)
+  }, [s.running])
+
+  // звуци и ефекти при смяна на фазата
+  const prevPhase = useRef(s.phase)
+  useEffect(() => {
+    const prev = prevPhase.current
+    prevPhase.current = s.phase
+    if (prev === s.phase) return
+    if (s.phase === 'hold') sounds.go()
+    if (s.phase === 'rest') {
+      sounds.ding()
+      smallBurst(0.5, 0.45)
+    }
+    if (s.phase === 'finished' && prev !== 'ready') onComplete()
+  }, [s.phase, onComplete])
+
+  // „тик“ в последните 3 секунди на задържането
+  const second = Math.ceil(s.left / 1000)
+  useEffect(() => {
+    if (s.phase !== 'hold' || !s.running) return
+    if (lastSecond.current !== second && second <= 3 && second > 0) sounds.tick()
+    lastSecond.current = second
+  }, [second, s.phase, s.running])
+
+  const total = s.phase === 'rest' ? REST_SECONDS : hold
+  const progress = s.phase === 'finished' ? 1 : 1 - s.left / (total * 1000)
+
+  const label = {
+    ready: 'Готов ли си?',
+    hold: 'Задръж!',
+    rest: 'Почивай си…',
+    finished: 'Браво! 🎉',
+  }[s.phase]
+
+  const face = s.phase === 'rest' ? '😌' : s.phase === 'finished' ? '🤩' : emoji
+
+  return (
+    <div className="trainer">
+      <Ring progress={progress} phase={s.phase}>
+        <div className={`ring-face ${s.phase} ${s.running ? 'running' : ''}`}>{face}</div>
+        <div className="ring-time" key={`${s.phase}-${second}`}>
+          {s.phase === 'finished' ? '✔' : second}
+        </div>
+        <div className="ring-label">{label}</div>
+      </Ring>
+
+      <RepStars total={reps} done={s.rep} />
+      <p className="rep-caption">
+        {s.rep} от {reps} {reps === 1 ? 'път' : 'пъти'} · по {hold} сек.
+      </p>
+
+      <div className="controls">
+        <button className="ctrl ctrl-reset" onClick={() => dispatch({ type: 'reset' })} aria-label="Отначало">
+          ↺
+        </button>
+        {s.phase === 'finished' ? null : s.running ? (
+          <button className="ctrl ctrl-main pause" onClick={() => dispatch({ type: 'pause', now: Date.now() })}>
+            ⏸ Пауза
+          </button>
+        ) : (
+          <button className="ctrl ctrl-main" onClick={() => dispatch({ type: 'start', now: Date.now() })}>
+            ▶ {s.phase === 'ready' ? 'Старт' : 'Продължи'}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}

@@ -3,6 +3,7 @@ import { sounds } from '../sound'
 import { smallBurst } from '../celebrate'
 import Ring from './Ring'
 import RepStars from './RepStars'
+import ChipButton from './ChipButton'
 
 const REST_SECONDS = 3
 
@@ -107,17 +108,22 @@ export default function HoldTimer({ exercise, done, onComplete }) {
       </p>
 
       <div className="controls">
-        <button className="ctrl ctrl-reset" onClick={() => dispatch({ type: 'reset' })} aria-label="Отначало">
-          ↺
-        </button>
+        <ChipButton icon="reset" tone="violet" onClick={() => dispatch({ type: 'reset' })}>
+          {s.phase === 'finished' ? 'Още веднъж' : 'Отначало'}
+        </ChipButton>
         {s.phase === 'finished' ? null : s.running ? (
-          <button className="ctrl ctrl-main pause" onClick={() => dispatch({ type: 'pause', now: Date.now() })}>
-            ⏸ Пауза
-          </button>
+          <ChipButton icon="pause" tone="amber" onClick={() => dispatch({ type: 'pause', now: Date.now() })}>
+            Пауза
+          </ChipButton>
         ) : (
-          <button className="ctrl ctrl-main" onClick={() => dispatch({ type: 'start', now: Date.now() })}>
-            ▶ {s.phase === 'ready' ? 'Старт' : 'Продължи'}
-          </button>
+          <ChipButton
+            icon="play"
+            tone="green"
+            attention={s.phase === 'ready'}
+            onClick={() => dispatch({ type: 'start', now: Date.now() })}
+          >
+            {s.phase === 'ready' ? 'Старт' : 'Продължи'}
+          </ChipButton>
         )}
       </div>
     </div>

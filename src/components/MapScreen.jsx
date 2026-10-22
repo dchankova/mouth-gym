@@ -1,4 +1,5 @@
 import { exercises, groups } from '../data/exercises'
+import ChipButton from './ChipButton'
 
 export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
   const count = done.size
@@ -7,7 +8,7 @@ export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
   return (
     <div className="screen map">
       <header className="map-header">
-        <div className="mascot">🦷</div>
+        <img className="mascot" src={`${import.meta.env.BASE_URL}mouth.svg`} alt="" />
         <h1 className="map-title">Гимнастика за устата</h1>
         <p className="map-sub">
           {count === 0 ? 'Хайде да тренираме!' : count === total ? 'Всичко е готово днес! 🏆' : 'Продължавай, супер си!'}
@@ -30,17 +31,15 @@ export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
               if (ex.group !== g.id) return null
               const isDone = done.has(ex.id)
               const isCurrent = i === unlockedIndex
-              const locked = !isDone && i > unlockedIndex
               return (
                 <button
                   key={ex.id}
-                  className={`stone ${isDone ? 'done' : ''} ${isCurrent ? 'current' : ''} ${locked ? 'locked' : ''}`}
-                  disabled={locked}
+                  className={`stone ${isDone ? 'done' : ''} ${isCurrent ? 'current' : ''}`}
                   onClick={() => onOpen(i)}
                   style={{ animationDelay: `${i * 40}ms` }}
                   title={ex.title}
                 >
-                  <span className="stone-emoji">{locked ? '🔒' : ex.emoji}</span>
+                  <span className="stone-emoji">{ex.emoji}</span>
                   <span className="stone-num">{i + 1}</span>
                   {isDone && <span className="stone-star">⭐</span>}
                 </button>
@@ -52,14 +51,14 @@ export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
 
       <div className="map-actions">
         {unlockedIndex < total && (
-          <button className="play-btn" onClick={() => onOpen(unlockedIndex)}>
-            ▶ {count === 0 ? 'Започни!' : 'Продължи!'}
-          </button>
+          <ChipButton icon="play" tone="green" size="lg" attention onClick={() => onOpen(unlockedIndex)}>
+            {count === 0 ? 'Започни!' : 'Продължи!'}
+          </ChipButton>
         )}
         {count > 0 && (
-          <button className="link-btn" onClick={onRestart}>
-            ↺ Започни отначало
-          </button>
+          <ChipButton icon="reset" tone="violet" size="sm" onClick={onRestart}>
+            Започни отначало
+          </ChipButton>
         )}
       </div>
     </div>

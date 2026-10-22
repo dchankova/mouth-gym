@@ -36,7 +36,7 @@ export default function App() {
 
   useEffect(() => setMuted(muted), [muted])
 
-  // Първото неизпълнено упражнение – до него може да се стигне, след него е заключено.
+  // Първото неизпълнено упражнение – подчертано на картата като следващо.
   const unlockedIndex = useMemo(() => {
     const i = exercises.findIndex((ex) => !done.has(ex.id))
     return i === -1 ? exercises.length : i
@@ -60,10 +60,6 @@ export default function App() {
     setScreen('map')
   }
 
-  const skip = () => {
-    if (window.confirm('Да пропуснем ли това упражнение?')) markDone(exercises[index].id)
-  }
-
   const exercise = exercises[index]
 
   return (
@@ -85,12 +81,11 @@ export default function App() {
           onNext={next}
           onPrev={() => setIndex(Math.max(0, index - 1))}
           onHome={() => setScreen('map')}
-          onSkip={skip}
         />
       )}
 
       {screen === 'finish' && (
-        <FinishScreen total={exercises.length} onHome={() => setScreen('map')} onRestart={restart} />
+        <FinishScreen count={done.size} total={exercises.length} onHome={() => setScreen('map')} onRestart={restart} />
       )}
     </div>
   )

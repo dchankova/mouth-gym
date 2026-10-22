@@ -5,10 +5,11 @@ import { stepConfetti } from '../celebrate'
 import HoldTimer from './HoldTimer'
 import RepCounter from './RepCounter'
 import OnceStep from './OnceStep'
+import ChipButton from './ChipButton'
 
 const trainers = { hold: HoldTimer, count: RepCounter, once: OnceStep }
 
-export default function ExerciseScreen({ exercise, index, total, done, onComplete, onNext, onPrev, onHome, onSkip }) {
+export default function ExerciseScreen({ exercise, index, total, done, onComplete, onNext, onPrev, onHome }) {
   const group = groups.find((g) => g.id === exercise.group)
   const Trainer = trainers[exercise.type]
   const isLast = index === total - 1
@@ -47,18 +48,12 @@ export default function ExerciseScreen({ exercise, index, total, done, onComplet
       </main>
 
       <footer className="ex-nav">
-        <button className="nav-btn" onClick={onPrev} disabled={index === 0}>
-          ◀ Назад
-        </button>
-        {done ? (
-          <button className="nav-btn next ready" onClick={onNext}>
-            {isLast ? 'Финал 🏆' : 'Напред ▶'}
-          </button>
-        ) : (
-          <button className="nav-btn skip" onClick={onSkip} title="За родителя: пропусни упражнението">
-            пропусни
-          </button>
-        )}
+        <ChipButton icon="back" onClick={onPrev} disabled={index === 0}>
+          Назад
+        </ChipButton>
+        <ChipButton icon={isLast ? '🏆' : 'next'} tone="pink" attention={done} onClick={onNext}>
+          {isLast ? 'Финал' : 'Напред'}
+        </ChipButton>
       </footer>
     </div>
   )

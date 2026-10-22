@@ -102,19 +102,6 @@ h2 {
   }
 }
 
-.mute-btn {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 10;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--card);
-  font-size: 22px;
-  box-shadow: var(--shadow);
-}
-
 /* ---------- карта ---------- */
 .map-header {
   text-align: center;
@@ -122,7 +109,9 @@ h2 {
 }
 
 .mascot {
-  font-size: 72px;
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 8px 10px rgba(232, 62, 116, 0.3));
   animation: wobble 2.4s ease-in-out infinite;
   display: inline-block;
 }
@@ -206,25 +195,6 @@ h2 {
   justify-content: center;
 }
 
-.stone {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: #fff;
-  border: 4px solid var(--accent);
-  box-shadow: 0 5px 0 color-mix(in srgb, var(--accent) 70%, #000);
-  display: grid;
-  place-items: center;
-  animation: pop-in 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) both;
-  transition: transform 0.15s;
-}
-
-.stone:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 70%, #000);
-}
-
 @keyframes pop-in {
   from {
     transform: scale(0);
@@ -265,72 +235,12 @@ h2 {
   }
 }
 
-.stone.done {
-  background: color-mix(in srgb, var(--accent) 25%, #fff);
-}
-
-.stone.locked {
-  opacity: 0.45;
-  border-style: dashed;
-  box-shadow: none;
-}
-
-.stone.current {
-  animation: pop-in 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) both, pulse 1.4s ease-in-out 0.6s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 5px 0 color-mix(in srgb, var(--accent) 70%, #000), 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
-  }
-  50% {
-    transform: scale(1.12);
-    box-shadow: 0 5px 0 color-mix(in srgb, var(--accent) 70%, #000), 0 0 0 14px transparent;
-  }
-}
-
 .map-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   margin-top: 24px;
-}
-
-.play-btn {
-  font-size: 26px;
-  font-weight: 900;
-  padding: 16px 44px;
-  border-radius: 99px;
-  color: #fff;
-  background: linear-gradient(180deg, #8ee86a, #4cbf2f);
-  box-shadow: 0 7px 0 #2f8a1a;
-  animation: bounce 1.6s ease-in-out infinite;
-}
-
-.play-btn:active {
-  transform: translateY(5px);
-  box-shadow: 0 2px 0 #2f8a1a;
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.link-btn {
-  background: none;
-  color: var(--ink-soft);
-  font-weight: 700;
-  font-size: 15px;
-  text-decoration: underline;
 }
 
 /* ---------- упражнение ---------- */
@@ -340,15 +250,6 @@ h2 {
   gap: 8px 12px;
   align-items: center;
   padding-right: 56px;
-}
-
-.icon-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--card);
-  font-size: 22px;
-  box-shadow: var(--shadow);
 }
 
 .ex-step {
@@ -559,33 +460,6 @@ h2 {
 }
 
 /* голям бутон за броене */
-.tap-button {
-  width: min(240px, 66vw);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, color-mix(in srgb, var(--accent) 45%, #fff));
-  border: 6px solid var(--accent);
-  box-shadow: 0 10px 0 color-mix(in srgb, var(--accent) 65%, #000);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  transition: transform 0.1s, box-shadow 0.1s;
-  color: var(--ink);
-}
-
-.tap-button:active:not(:disabled) {
-  transform: translateY(8px) scale(0.97);
-  box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 65%, #000);
-}
-
-.tap-button.finished {
-  border-color: var(--good);
-  box-shadow: 0 10px 0 #2f8a1a;
-  animation: party 1.2s ease-in-out infinite;
-}
-
 .tap-face {
   font-size: 72px;
   line-height: 1;
@@ -608,51 +482,11 @@ h2 {
 /* бутони за управление */
 .controls {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
   margin-top: 16px;
   align-items: center;
-}
-
-.ctrl {
-  height: 60px;
-  border-radius: 99px;
-  font-size: 22px;
-  font-weight: 900;
-  color: #fff;
-}
-
-.ctrl:active {
-  transform: translateY(4px);
-}
-
-.ctrl-main {
-  padding: 0 32px;
-  background: linear-gradient(180deg, #8ee86a, #4cbf2f);
-  box-shadow: 0 6px 0 #2f8a1a;
-}
-
-.ctrl-main.pause {
-  background: linear-gradient(180deg, #ffd36e, #ffa920);
-  box-shadow: 0 6px 0 #c77a00;
-}
-
-.ctrl-main.small {
-  height: 48px;
-  padding: 0 22px;
-  font-size: 18px;
-}
-
-.ctrl-reset {
-  width: 60px;
-  background: linear-gradient(180deg, #b9a4ff, #8a6cf0);
-  box-shadow: 0 6px 0 #5a3fc0;
-  font-size: 28px;
-}
-
-.stopwatch .ctrl-reset {
-  width: 48px;
-  height: 48px;
-  font-size: 22px;
 }
 
 .stopwatch {
@@ -668,15 +502,6 @@ h2 {
   margin-top: 0;
 }
 
-.sw-time {
-  font-family: 'Comfortaa', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  padding: 8px 16px;
-  border-radius: 99px;
-  background: #fff;
-}
-
 .sw-time.running {
   animation: breathe 2s ease-in-out infinite;
 }
@@ -687,38 +512,6 @@ h2 {
   justify-content: space-between;
   align-items: center;
   margin-top: 18px;
-}
-
-.nav-btn {
-  padding: 14px 22px;
-  border-radius: 99px;
-  font-size: 18px;
-  font-weight: 900;
-  background: var(--card);
-  color: var(--ink);
-  box-shadow: var(--shadow);
-}
-
-.nav-btn:disabled {
-  opacity: 0.4;
-}
-
-.nav-btn.next {
-  color: #fff;
-  font-size: 22px;
-  padding: 16px 30px;
-  background: linear-gradient(180deg, #ff9cc6, #ff5c9d);
-  box-shadow: 0 6px 0 #c4306d;
-  animation: bounce 1.2s ease-in-out infinite, screen-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
-}
-
-.nav-btn.skip {
-  background: none;
-  box-shadow: none;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink-soft);
-  text-decoration: underline;
 }
 
 /* ---------- финал ---------- */

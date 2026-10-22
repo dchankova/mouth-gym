@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import ChipButton from './ChipButton'
 
 const fmt = (ms) => {
   const total = Math.floor(ms / 1000)
@@ -50,13 +51,13 @@ export default function Stopwatch({ startSignal, stop, onReset }) {
     <div className="stopwatch">
       <span className={`sw-time ${running ? 'running' : ''}`}>⏱ {fmt(shown)}</span>
       <div className="controls">
-        <button className="ctrl ctrl-reset" onClick={onReset} aria-label="Отначало">
-          ↺
-        </button>
+        <ChipButton icon="reset" tone="violet" size="sm" onClick={onReset}>
+          {stop ? 'Още веднъж' : 'Отначало'}
+        </ChipButton>
         {!stop && (
-          <button className={`ctrl ctrl-main small ${running ? 'pause' : ''}`} onClick={toggle}>
-            {running ? '⏸ Пауза' : '▶ Старт'}
-          </button>
+          <ChipButton icon={running ? 'pause' : 'play'} tone={running ? 'amber' : 'green'} size="sm" onClick={toggle}>
+            {running ? 'Пауза' : 'Старт'}
+          </ChipButton>
         )}
       </div>
     </div>

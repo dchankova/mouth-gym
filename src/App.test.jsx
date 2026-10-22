@@ -48,7 +48,7 @@ describe('картата', () => {
 describe('еднократно упражнение', () => {
   it('„Направих го!“ го отбелязва и картата показва звезда', async () => {
     const { user } = setup()
-    await openFromMap(user, 'Сънливо лъвче')
+    await openFromMap(user, 'Прозявка')
     await user.click(screen.getByRole('button', { name: /Направих го!/ }))
 
     expect(screen.getByRole('button', { name: /Браво!/ })).toBeDisabled()
@@ -62,7 +62,7 @@ describe('еднократно упражнение', () => {
 describe('таймер за задържане', () => {
   it('брои задържането, почива и продължава със следващото повторение', async () => {
     const { user } = setup({ fakeTimers: true })
-    await openFromMap(user, 'Устата на хипопотама') // 5 пъти × 5 сек.
+    await openFromMap(user, 'Широко отворена уста') // 5 пъти × 5 сек.
 
     expect(screen.getByText('Готов ли си?')).toBeInTheDocument()
     expect(screen.getByText('0 от 5 пъти · по 5 сек.')).toBeInTheDocument()
@@ -80,7 +80,7 @@ describe('таймер за задържане', () => {
 
   it('пауза спира времето, а „Продължи“ го пуска отново', async () => {
     const { user } = setup({ fakeTimers: true })
-    await openFromMap(user, 'Устата на хипопотама')
+    await openFromMap(user, 'Широко отворена уста')
     await user.click(screen.getByRole('button', { name: /Старт/ }))
     wait(2000)
 
@@ -96,7 +96,7 @@ describe('таймер за задържане', () => {
 
   it('„Отначало“ нулира повторенията', async () => {
     const { user } = setup({ fakeTimers: true })
-    await openFromMap(user, 'Устата на хипопотама')
+    await openFromMap(user, 'Широко отворена уста')
     await user.click(screen.getByRole('button', { name: /Старт/ }))
     wait(6000)
 
@@ -108,7 +108,7 @@ describe('таймер за задържане', () => {
 
   it('след всички повторения упражнението е завършено', async () => {
     const { user } = setup({ fakeTimers: true })
-    await openFromMap(user, 'Устата на хипопотама')
+    await openFromMap(user, 'Широко отворена уста')
     await user.click(screen.getByRole('button', { name: /Старт/ }))
 
     wait(5 * 5000 + 4 * 3000) // 5 задържания + 4 почивки между тях
@@ -122,7 +122,7 @@ describe('таймер за задържане', () => {
 describe('брояч на повторения', () => {
   it('брои по серии и завършва след последното натискане', async () => {
     const { user } = setup()
-    await openFromMap(user, 'Раче – наляво и надясно') // 2 серии × 5 пъти
+    await openFromMap(user, 'Челюстта наляво и надясно') // 2 серии × 5 пъти
     const tap = () => user.click(screen.getByRole('button', { name: /Натисни след всеки път/ }))
 
     expect(screen.getByText(/Серия/)).toHaveTextContent('Серия 1 от 2')
@@ -135,7 +135,7 @@ describe('брояч на повторения', () => {
 
   it('„Отначало“ нулира брояча', async () => {
     const { user } = setup()
-    await openFromMap(user, 'Рибка балон')
+    await openFromMap(user, 'Издуване на двете бузи')
     const tapButton = screen.getByRole('button', { name: /Натисни след всеки път/ })
     await user.click(tapButton)
     await user.click(tapButton)
@@ -147,7 +147,7 @@ describe('брояч на повторения', () => {
 
   it('хронометърът тръгва със „Старт“ и спира с „Пауза“', async () => {
     const { user } = setup({ fakeTimers: true })
-    await openFromMap(user, 'Рибка балон')
+    await openFromMap(user, 'Издуване на двете бузи')
     expect(screen.getByText('⏱ 0:00')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /Старт/ }))
@@ -189,7 +189,7 @@ describe('навигация', () => {
 describe('прогрес', () => {
   it('се запазва след презареждане в същия ден', async () => {
     const { user, unmount } = setup()
-    await openFromMap(user, 'Сънливо лъвче')
+    await openFromMap(user, 'Прозявка')
     await user.click(screen.getByRole('button', { name: /Направих го!/ }))
     unmount()
 
@@ -205,7 +205,7 @@ describe('прогрес', () => {
 
   it('„Започни отначало“ изчиства прогреса', async () => {
     const { user } = setup()
-    await openFromMap(user, 'Сънливо лъвче')
+    await openFromMap(user, 'Прозявка')
     await user.click(screen.getByRole('button', { name: /Направих го!/ }))
     await user.click(screen.getByRole('button', { name: 'Към картата' }))
 

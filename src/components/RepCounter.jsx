@@ -3,9 +3,12 @@ import { sounds } from '../sound'
 import { smallBurst } from '../celebrate'
 import Stopwatch from './Stopwatch'
 import RepStars from './RepStars'
+import Face from './Face'
+import DemoStrip from './DemoStrip'
+import { useLoop } from '../useLoop'
 
 export default function RepCounter({ exercise, done, onComplete }) {
-  const { reps, sets = 1, emoji } = exercise
+  const { reps, sets = 1, demo } = exercise
   const total = reps * sets
   const [count, setCount] = useState(done ? total : 0)
   const [bump, setBump] = useState(0)
@@ -16,6 +19,7 @@ export default function RepCounter({ exercise, done, onComplete }) {
   const finished = count >= total
   const set = Math.min(sets, Math.floor(count / reps) + 1)
   const setJustEnded = count > 0 && count % reps === 0 && !finished
+  const loopIndex = useLoop(demo.steps.length, !finished)
 
   useEffect(() => {
     if (count === total && count > 0 && !done) onComplete()
@@ -40,6 +44,7 @@ export default function RepCounter({ exercise, done, onComplete }) {
 
   return (
     <div className="trainer">
+      <DemoStrip steps={demo.steps} active={finished ? -1 : loopIndex} />
       <button
         ref={buttonRef}
         className={`tap-button ${finished ? 'finished' : ''}`}
@@ -47,7 +52,7 @@ export default function RepCounter({ exercise, done, onComplete }) {
         disabled={finished}
       >
         <span className="tap-face" key={bump}>
-          {finished ? '🤩' : emoji}
+          <Face pose={finished ? 'happy' : demo.steps[loopIndex][0]} size={116} />
         </span>
         <span className="tap-count" key={`c${bump}`}>
           {finished ? 'Браво!' : count}

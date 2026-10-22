@@ -4,6 +4,9 @@ import { smallBurst } from '../celebrate'
 import Ring from './Ring'
 import RepStars from './RepStars'
 import ChipButton from './ChipButton'
+import Face from './Face'
+import DemoStrip from './DemoStrip'
+import { useLoop } from '../useLoop'
 
 const REST_SECONDS = 3
 
@@ -48,7 +51,7 @@ function reducer(s, action) {
 }
 
 export default function HoldTimer({ exercise, done, onComplete }) {
-  const { reps, hold, emoji } = exercise
+  const { reps, hold } = exercise
   const [s, dispatch] = useReducer(reducer, { reps, hold, done }, init)
   const lastSecond = useRef(null)
 
@@ -90,16 +93,30 @@ export default function HoldTimer({ exercise, done, onComplete }) {
     finished: 'Браво! 🎉',
   }[s.phase]
 
-  const face = s.phase === 'rest' ? '😌' : s.phase === 'finished' ? '🤩' : emoji
+  // какво показва личицето: демо в покой, позата при задържане, отпуснато при почивка
+  const { steps, hold: holdPose = steps.at(-1)[0], rest = 'relax' } = exercise.demo
+  const loopIndex = useLoop(steps.length, s.phase === 'ready')
+  const currentHold = Array.isArray(holdPose) ? holdPose[s.rep % holdPose.length] : holdPose
+  const pose = {
+    ready: steps[loopIndex][0],
+    hold: currentHold,
+    rest,
+    finished: 'happy',
+  }[s.phase]
+  const activeStep =
+    s.phase === 'ready' ? loopIndex : s.phase === 'hold' ? steps.findIndex(([p]) => p === currentHold) : -1
 
   return (
     <div className="trainer">
+      <DemoStrip steps={steps} active={activeStep} />
       <Ring progress={progress} phase={s.phase}>
-        <div className={`ring-face ${s.phase} ${s.running ? 'running' : ''}`}>{face}</div>
-        <div className="ring-time" key={`${s.phase}-${second}`}>
+        <div className={`timer-face ${s.phase} ${s.running ? 'running' : ''}`}>
+          <Face pose={pose} size={112} />
+        </div>
+        <div className="timer-time" key={`${s.phase}-${second}`}>
           {s.phase === 'finished' ? '✔' : second}
         </div>
-        <div className="ring-label">{label}</div>
+        <div className="timer-label">{label}</div>
       </Ring>
 
       <RepStars total={reps} done={s.rep} />

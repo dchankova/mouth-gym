@@ -1,0 +1,61 @@
+.face {
+  overflow: visible;
+}
+
+.face-part {
+  transition: opacity 0.35s ease, scale 0.5s var(--spring);
+}
+
+.face-scale {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.face-move {
+  transition: transform 0.6s var(--spring);
+}
+
+.face-buzz {
+  animation: face-buzz 0.08s linear infinite alternate;
+}
+
+@keyframes face-buzz {
+  to {
+    translate: 1.5px -1px;
+  }
+}
+
+.face-arrow {
+  animation: face-blink 0.9s ease-in-out infinite;
+}
+
+@keyframes face-blink {
+  50% {
+    filter: brightness(1.5);
+  }
+}
+
+.face-float {
+  animation: face-float 1.6s ease-in-out infinite;
+}
+
+@keyframes face-float {
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+.face-pop {
+  animation: face-pop 0.6s var(--spring) infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes face-pop {
+  from {
+    scale: 0.8;
+  }
+  to {
+    scale: 1.15;
+  }
+}

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { exercises } from './data/exercises'
 import { setMuted } from './sound'
-import Bubbles from './components/Bubbles'
+import SpaceBackground from './components/SpaceBackground'
 import MapScreen from './components/MapScreen'
 import ExerciseScreen from './components/ExerciseScreen'
 import FinishScreen from './components/FinishScreen'
@@ -64,8 +64,12 @@ export default function App() {
 
   return (
     <div className="app">
-      <Bubbles />
-      <button className="mute-btn" onClick={() => setMutedState((m) => !m)} aria-label="Звук">
+      <SpaceBackground />
+      <button
+        className="btn btn-circle btn-lg fixed top-3 right-3 z-10 border-white/70 bg-white/50 text-xl shadow-lg backdrop-blur-md"
+        onClick={() => setMutedState((m) => !m)}
+        aria-label="Звук"
+      >
         {muted ? '🔇' : '🔊'}
       </button>
 

@@ -1,63 +1,28 @@
-/* ---------- бутони ---------- */
-:root {
-  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --glass-bg: rgba(255, 255, 255, 0.38);
-  --glass-border: rgba(255, 255, 255, 0.75);
-  --glass-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -3px 8px rgba(255, 255, 255, 0.25),
-    0 10px 30px -10px rgba(59, 42, 92, 0.35);
+/* Игрови елементи, които не са обикновени бутони – камъчетата на картата,
+   голямото топче за броене и хронометърът. Останалите бутони са от DaisyUI (btn). */
+
+.stone,
+.tap-button {
+  cursor: pointer;
+  transition: scale 0.35s var(--spring), box-shadow 0.25s ease;
 }
 
-button {
-  transition: scale 0.35s var(--spring), box-shadow 0.25s ease, background-color 0.25s, opacity 0.2s;
-}
-
-button:active:not(:disabled) {
-  scale: 0.94;
+.stone:active,
+.tap-button:active:not(:disabled) {
+  scale: 0.93;
 }
 
 @media (hover: hover) {
-  button:hover:not(:disabled) {
-    scale: 1.04;
+  .stone:hover,
+  .tap-button:hover:not(:disabled) {
+    scale: 1.05;
   }
 }
 
-button:focus-visible {
+.stone:focus-visible,
+.tap-button:focus-visible {
   outline: 3px solid #7c5cff;
   outline-offset: 4px;
-}
-
-button:disabled {
-  opacity: 0.4;
-}
-
-/* стъклени кръгли бутони само с иконка (звук, карта) и хронометърът */
-.mute-btn,
-.icon-btn,
-.sw-time {
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  color: var(--ink);
-}
-
-.mute-btn {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 10;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  font-size: 22px;
-}
-
-.icon-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  font-size: 22px;
 }
 
 .sw-time {
@@ -66,165 +31,11 @@ button:disabled {
   font-weight: 700;
   padding: 8px 18px;
   border-radius: 99px;
-}
-
-/* ---------- хапчета: цветна иконка + надпис ---------- */
-.chip {
-  --tone: #6c5a8e;
-  --tone-light: #a99bc8;
-  --tint: rgba(255, 255, 255, 0.78);
-  --tone-ink: var(--ink);
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 56px;
-  padding: 7px 24px 7px 7px;
-  border-radius: 99px;
-  background: var(--tint);
-  -webkit-backdrop-filter: blur(16px) saturate(170%);
-  backdrop-filter: blur(16px) saturate(170%);
-  border: 1px solid color-mix(in srgb, var(--tone) 20%, #fff);
-  color: var(--tone-ink);
-  font-size: 19px;
-  font-weight: 900;
-  white-space: nowrap;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 10px 24px -12px color-mix(in srgb, var(--tone) 75%, transparent);
-}
-
-.chip-green {
-  --tone: #34b233;
-  --tone-light: #8be36a;
-  --tint: #e3f8d8;
-  --tone-ink: #1d6a1c;
-}
-
-.chip-amber {
-  --tone: #ff9a1a;
-  --tone-light: #ffd56e;
-  --tint: #fff1d4;
-  --tone-ink: #8a4b00;
-}
-
-.chip-pink {
-  --tone: #ff4f93;
-  --tone-light: #ff9cc6;
-  --tint: #ffe2ef;
-  --tone-ink: #a3165a;
-}
-
-.chip-violet {
-  --tone: #7c5cff;
-  --tone-light: #b9a4ff;
-  --tint: #ece6ff;
-  --tone-ink: #4a2fb8;
-}
-
-.chip-icon {
-  flex: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  font-size: 22px;
-  background: linear-gradient(145deg, var(--tone-light), var(--tone));
-  box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.5),
-    0 4px 10px -3px color-mix(in srgb, var(--tone) 85%, transparent);
-  transition: translate 0.35s var(--spring), rotate 0.5s var(--spring);
-}
-
-.chip-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-/* иконката „оживява“ при посочване и натискане */
-@media (hover: hover) {
-  .chip:hover:not(:disabled) .chip-icon {
-    rotate: -10deg;
-  }
-
-  .chip[data-icon='next']:hover:not(:disabled) .chip-icon {
-    rotate: 0deg;
-    translate: 4px 0;
-  }
-
-  .chip[data-icon='back']:hover:not(:disabled) .chip-icon {
-    rotate: 0deg;
-    translate: -4px 0;
-  }
-
-  .chip[data-icon='reset']:hover:not(:disabled) .chip-icon {
-    rotate: -200deg;
-  }
-}
-
-.chip[data-icon='reset']:active:not(:disabled) .chip-icon {
-  rotate: -360deg;
-}
-
-.chip-lg {
-  min-height: 70px;
-  gap: 14px;
-  padding: 8px 32px 8px 8px;
-  font-size: 24px;
-}
-
-.chip-lg .chip-icon {
-  width: 54px;
-  height: 54px;
-  font-size: 28px;
-}
-
-.chip-lg .chip-icon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.chip-sm {
-  min-height: 46px;
-  gap: 8px;
-  padding: 5px 18px 5px 5px;
-  font-size: 16px;
-}
-
-.chip-sm .chip-icon {
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
-}
-
-.chip-sm .chip-icon svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* бутонът, който детето трябва да натисне сега – подскача и иконката пулсира */
-.chip.attention {
-  background: color-mix(in srgb, var(--tone) 24%, #fff);
-  animation: float-y 1.6s ease-in-out infinite;
-}
-
-.chip.attention .chip-icon {
-  animation: icon-ping 1.6s ease-out infinite;
-}
-
-@keyframes float-y {
-  50% {
-    translate: 0 -5px;
-  }
-}
-
-@keyframes icon-ping {
-  0% {
-    box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.5), 0 0 0 0 color-mix(in srgb, var(--tone) 60%, transparent);
-  }
-  70%,
-  100% {
-    box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.5), 0 0 0 12px transparent;
-  }
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.95), 0 10px 30px -10px rgba(59, 42, 92, 0.35);
 }
 
 /* ---------- камъчета на картата ---------- */
@@ -296,20 +107,21 @@ button:disabled {
   inset: -10px;
   border-radius: 50%;
   z-index: -1;
-  background: conic-gradient(#ff7eb3, #ffb347, #ffe066, #7ed957, #5ec8ff, #b9a4ff, #ff7eb3);
-  filter: blur(12px);
-  opacity: 0.7;
-  animation: spin 6s linear infinite;
+  background: var(--accent);
+  filter: blur(14px);
+  opacity: 0.45;
+  animation: glow 2.4s ease-in-out infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(1turn);
+@keyframes glow {
+  50% {
+    opacity: 0.75;
+    scale: 1.06;
   }
 }
 
 .tap-button:disabled {
-  opacity: 1;
+  cursor: default;
 }
 
 .tap-button.finished {
@@ -318,6 +130,5 @@ button:disabled {
 }
 
 .tap-button.finished::before {
-  background: conic-gradient(#7ed957, #ffe066, #ffb347, #7ed957);
-  animation-duration: 2s;
+  animation-duration: 1.2s;
 }

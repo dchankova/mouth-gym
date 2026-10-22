@@ -5,7 +5,7 @@ const C = 2 * Math.PI * R
 
 export default function Ring({ progress, phase, children }) {
   return (
-    <div className={`ring ring-${phase}`}>
+    <div className={`timer-ring timer-${phase}`}>
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`}>
         <defs>
           <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
@@ -14,9 +14,9 @@ export default function Ring({ progress, phase, children }) {
             <stop offset="100%" stopColor="#7ed957" />
           </linearGradient>
         </defs>
-        <circle className="ring-track" cx={SIZE / 2} cy={SIZE / 2} r={R} strokeWidth={STROKE} />
+        <circle className="timer-track" cx={SIZE / 2} cy={SIZE / 2} r={R} strokeWidth={STROKE} />
         <circle
-          className="ring-bar"
+          className="timer-bar"
           cx={SIZE / 2}
           cy={SIZE / 2}
           r={R}
@@ -25,7 +25,7 @@ export default function Ring({ progress, phase, children }) {
           strokeDashoffset={C * (1 - Math.min(1, Math.max(0, progress)))}
         />
       </svg>
-      <div className="ring-inner">{children}</div>
+      <div className="timer-inner">{children}</div>
     </div>
   )
 }

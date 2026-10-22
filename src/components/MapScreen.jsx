@@ -1,4 +1,5 @@
-import { exercises, groups } from '../data/exercises'
+import { exercises, groups, keyPose } from '../data/exercises'
+import Face from './Face'
 import ChipButton from './ChipButton'
 
 export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
@@ -24,7 +25,7 @@ export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
       {groups.map((g) => (
         <section key={g.id} className="map-group" style={{ '--accent': g.color }}>
           <h2 className="map-group-title">
-            <span>{g.emoji}</span> {g.title}
+            <Face pose={g.pose} size={36} /> {g.title}
           </h2>
           <div className="map-path">
             {exercises.map((ex, i) => {
@@ -39,7 +40,9 @@ export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
                   style={{ animationDelay: `${i * 40}ms` }}
                   title={ex.title}
                 >
-                  <span className="stone-emoji">{ex.emoji}</span>
+                  <span className="stone-face">
+                    <Face pose={keyPose(ex)} size={64} zoom />
+                  </span>
                   <span className="stone-num">{i + 1}</span>
                   {isDone && <span className="stone-star">⭐</span>}
                 </button>

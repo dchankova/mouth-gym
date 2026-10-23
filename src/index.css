@@ -664,23 +664,6 @@ h2 {
   align-items: center;
 }
 
-.stopwatch {
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.stopwatch .controls {
-  margin-top: 0;
-}
-
-.sw-time.running {
-  animation: breathe 2s ease-in-out infinite;
-}
-
 /* навигация */
 .ex-nav {
   display: flex;

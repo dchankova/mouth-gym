@@ -145,18 +145,11 @@ describe('брояч на повторения', () => {
     expect(within(tapButton).getByText('0')).toBeInTheDocument()
   })
 
-  it('хронометърът тръгва със „Старт“ и спира с „Пауза“', async () => {
-    const { user } = setup({ fakeTimers: true })
-    await openFromMap(user, 'Издуване на двете бузи')
-    expect(screen.getByText('⏱ 0:00')).toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: /Старт/ }))
-    wait(65000)
-    expect(screen.getByText('⏱ 1:05')).toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: /Пауза/ }))
-    wait(10000)
-    expect(screen.getByText('⏱ 1:05')).toBeInTheDocument()
+  it('няма хронометър', async () => {
+    const { user } = setup()
+    await openFromMap(user, 'Челюстта наляво и надясно')
+    expect(screen.queryByText(/⏱/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Старт|Пауза/ })).not.toBeInTheDocument()
   })
 })
 

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { sounds } from '../sound'
 import { smallBurst } from '../celebrate'
-import Stopwatch from './Stopwatch'
 import RepStars from './RepStars'
+import ChipButton from './ChipButton'
 import Face from './Face'
 import DemoStrip from './DemoStrip'
 import { useLoop } from '../useLoop'
@@ -12,8 +12,6 @@ export default function RepCounter({ exercise, done, onComplete }) {
   const total = reps * sets
   const [count, setCount] = useState(done ? total : 0)
   const [bump, setBump] = useState(0)
-  const [resetKey, setResetKey] = useState(0)
-  const [autoStart, setAutoStart] = useState(0)
   const buttonRef = useRef(null)
 
   const finished = count >= total
@@ -30,16 +28,10 @@ export default function RepCounter({ exercise, done, onComplete }) {
     const next = count + 1
     setCount(next)
     setBump((b) => b + 1)
-    setAutoStart((a) => a + 1)
     if (next % reps === 0) sounds.ding()
     else sounds.pop()
     const rect = buttonRef.current?.getBoundingClientRect()
     if (rect) smallBurst((rect.left + rect.width / 2) / window.innerWidth, (rect.top + rect.height / 2) / window.innerHeight)
-  }
-
-  const reset = () => {
-    setCount(0)
-    setResetKey((k) => k + 1)
   }
 
   return (
@@ -72,7 +64,11 @@ export default function RepCounter({ exercise, done, onComplete }) {
         {sets > 1 ? `${sets} серии по ${reps} пъти` : `${reps} пъти`}
       </p>
 
-      <Stopwatch key={resetKey} startSignal={autoStart} stop={finished} onReset={reset} />
+      <div className="controls">
+        <ChipButton icon="reset" tone="violet" onClick={() => setCount(0)} disabled={count === 0}>
+          {finished ? 'Още веднъж' : 'Отначало'}
+        </ChipButton>
+      </div>
     </div>
   )
 }

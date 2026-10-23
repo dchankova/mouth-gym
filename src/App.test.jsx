@@ -4,7 +4,9 @@ import { describe, expect, it, vi } from 'vitest'
 import App from './App'
 import { exercises } from './data/exercises'
 
-const total = exercises.length
+// по подразбиране упражненията с трейнер са изключени
+const session = exercises.filter((ex) => !ex.optional)
+const total = session.length
 
 function setup({ fakeTimers = false } = {}) {
   if (fakeTimers) vi.useFakeTimers()
@@ -27,13 +29,14 @@ describe('картата', () => {
     setup()
     expect(screen.getByRole('heading', { name: 'Гимнастика за устата' })).toBeInTheDocument()
     expect(screen.getByText(`⭐ 0 / ${total}`)).toBeInTheDocument()
-    exercises.forEach((ex) => expect(screen.getByTitle(ex.title)).toBeEnabled())
+    session.forEach((ex) => expect(screen.getByTitle(ex.title)).toBeEnabled())
+    exercises.filter((ex) => ex.optional).forEach((ex) => expect(screen.queryByTitle(ex.title)).not.toBeInTheDocument())
   })
 
   it('„Започни!“ отваря първото упражнение', async () => {
     const { user } = setup()
     await user.click(screen.getByRole('button', { name: /Започни!/ }))
-    expect(screen.getByRole('heading', { name: exercises[0].title })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: session[0].title })).toBeInTheDocument()
     expect(screen.getByText(`Стъпка 1 от ${total}`)).toBeInTheDocument()
   })
 
@@ -41,7 +44,8 @@ describe('картата', () => {
     const { user } = setup()
     await openFromMap(user, 'Маймунско лице')
     expect(screen.getByRole('heading', { name: 'Маймунско лице' })).toBeInTheDocument()
-    expect(screen.getByText(`Стъпка 20 от ${total}`)).toBeInTheDocument()
+    const step = session.findIndex((ex) => ex.title === 'Маймунско лице') + 1
+    expect(screen.getByText(`Стъпка ${step} от ${total}`)).toBeInTheDocument()
   })
 })
 
@@ -160,15 +164,15 @@ describe('навигация', () => {
     expect(screen.getByRole('button', { name: /Назад/ })).toBeDisabled()
 
     await user.click(screen.getByRole('button', { name: /Напред/ }))
-    expect(screen.getByRole('heading', { name: exercises[1].title })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: session[1].title })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /Назад/ }))
-    expect(screen.getByRole('heading', { name: exercises[0].title })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: session[0].title })).toBeInTheDocument()
   })
 
   it('от последното упражнение „Финал“ води до екрана с купата', async () => {
     const { user } = setup()
-    await openFromMap(user, exercises[total - 1].title)
+    await openFromMap(user, session[total - 1].title)
     await user.click(screen.getByRole('button', { name: /Финал/ }))
 
     expect(screen.getByRole('heading', { name: 'Ти си шампион!' })).toBeInTheDocument()
@@ -204,6 +208,35 @@ describe('прогрес', () => {
 
     await user.click(screen.getByRole('button', { name: /Започни отначало/ }))
     expect(screen.getByText(`⭐ 0 / ${total}`)).toBeInTheDocument()
+  })
+})
+
+describe('упражнения с трейнер', () => {
+  const trainerSwitch = () => screen.getByRole('checkbox', { name: /Упражнения с трейнер/ })
+
+  it('са изключени по подразбиране и се добавят с превключвателя', async () => {
+    const { user } = setup()
+    expect(trainerSwitch()).not.toBeChecked()
+    expect(screen.queryByTitle('Трейнер за устни')).not.toBeInTheDocument()
+
+    await user.click(trainerSwitch())
+    expect(screen.getByTitle('Трейнер за устни')).toBeInTheDocument()
+    expect(screen.getByTitle('Трейнер за езика')).toBeInTheDocument()
+    expect(screen.getByText(`⭐ 0 / ${exercises.length}`)).toBeInTheDocument()
+
+    await openFromMap(user, 'Трейнер за езика')
+    const step = exercises.findIndex((ex) => ex.title === 'Трейнер за езика') + 1
+    expect(screen.getByText(`Стъпка ${step} от ${exercises.length}`)).toBeInTheDocument()
+  })
+
+  it('изборът се запомня', async () => {
+    const { user, unmount } = setup()
+    await user.click(trainerSwitch())
+    unmount()
+
+    render(<App />)
+    expect(trainerSwitch()).toBeChecked()
+    expect(screen.getByTitle('Трейнер за устни')).toBeInTheDocument()
   })
 })
 

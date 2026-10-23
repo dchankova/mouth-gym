@@ -1,13 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { exercises } from './data/exercises'
 import { setMuted } from './sound'
-import SpaceBackground from './components/SpaceBackground'
+import GymBackground from './components/GymBackground'
 import MapScreen from './components/MapScreen'
 import ExerciseScreen from './components/ExerciseScreen'
 import FinishScreen from './components/FinishScreen'
 
 const STORAGE_KEY = 'mouth-gym-progress'
+const SETTINGS_KEY = 'mouth-gym-settings'
 const today = () => new Date().toISOString().slice(0, 10)
+
+// Настройките (напр. дали има трейнер) се помнят за постоянно, не само за деня.
+function loadWithTrainer() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY))?.withTrainer === true
+  } catch {
+    return false
+  }
+}
 
 // Прогресът се пази за деня – на следващия ден картата започва на чисто.
 function loadDone() {
@@ -25,6 +35,7 @@ export default function App() {
   const [screen, setScreen] = useState('map')
   const [index, setIndex] = useState(0)
   const [muted, setMutedState] = useState(false)
+  const [withTrainer, setWithTrainer] = useState(loadWithTrainer)
 
   useEffect(() => {
     try {
@@ -34,13 +45,25 @@ export default function App() {
     }
   }, [done])
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ withTrainer }))
+    } catch {
+      // браузърът не позволява запис
+    }
+  }, [withTrainer])
+
   useEffect(() => setMuted(muted), [muted])
+
+  // Упражненията за днешната тренировка – тези с трейнер само ако са включени.
+  const session = useMemo(() => exercises.filter((ex) => withTrainer || !ex.optional), [withTrainer])
+  const doneCount = session.filter((ex) => done.has(ex.id)).length
 
   // Първото неизпълнено упражнение – подчертано на картата като следващо.
   const unlockedIndex = useMemo(() => {
-    const i = exercises.findIndex((ex) => !done.has(ex.id))
-    return i === -1 ? exercises.length : i
-  }, [done])
+    const i = session.findIndex((ex) => !done.has(ex.id))
+    return i === -1 ? session.length : i
+  }, [session, done])
 
   const markDone = useCallback((id) => setDone((d) => (d.has(id) ? d : new Set(d).add(id))), [])
 
@@ -50,7 +73,7 @@ export default function App() {
   }
 
   const next = () => {
-    if (index === exercises.length - 1) setScreen('finish')
+    if (index === session.length - 1) setScreen('finish')
     else setIndex(index + 1)
   }
 
@@ -60,11 +83,11 @@ export default function App() {
     setScreen('map')
   }
 
-  const exercise = exercises[index]
+  const exercise = session[index]
 
   return (
     <div className="app">
-      <SpaceBackground />
+      <GymBackground />
       <button
         className="btn btn-circle btn-lg fixed top-3 right-3 z-10 border-white/70 bg-white/50 text-xl shadow-lg backdrop-blur-md"
         onClick={() => setMutedState((m) => !m)}
@@ -73,13 +96,24 @@ export default function App() {
         {muted ? '🔇' : '🔊'}
       </button>
 
-      {screen === 'map' && <MapScreen done={done} unlockedIndex={unlockedIndex} onOpen={open} onRestart={restart} />}
+      {screen === 'map' && (
+        <MapScreen
+          session={session}
+          done={done}
+          doneCount={doneCount}
+          unlockedIndex={unlockedIndex}
+          withTrainer={withTrainer}
+          onWithTrainerChange={setWithTrainer}
+          onOpen={open}
+          onRestart={restart}
+        />
+      )}
 
       {screen === 'exercise' && (
         <ExerciseScreen
           exercise={exercise}
           index={index}
-          total={exercises.length}
+          total={session.length}
           done={done.has(exercise.id)}
           onComplete={markDone}
           onNext={next}
@@ -89,7 +123,7 @@ export default function App() {
       )}
 
       {screen === 'finish' && (
-        <FinishScreen count={done.size} total={exercises.length} onHome={() => setScreen('map')} onRestart={restart} />
+        <FinishScreen count={doneCount} total={session.length} onHome={() => setScreen('map')} onRestart={restart} />
       )}
     </div>
   )

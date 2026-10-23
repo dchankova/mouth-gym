@@ -1,10 +1,18 @@
-import { exercises, groups, keyPose } from '../data/exercises'
+import { groups, keyPose } from '../data/exercises'
 import Face from './Face'
 import ChipButton from './ChipButton'
 
-export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
-  const count = done.size
-  const total = exercises.length
+export default function MapScreen({
+  session,
+  done,
+  doneCount: count,
+  unlockedIndex,
+  withTrainer,
+  onWithTrainerChange,
+  onOpen,
+  onRestart,
+}) {
+  const total = session.length
 
   return (
     <div className="screen map">
@@ -22,13 +30,27 @@ export default function MapScreen({ done, unlockedIndex, onOpen, onRestart }) {
         </div>
       </header>
 
+      <label className="trainer-toggle">
+        <span className="trainer-toggle-icon">🏋️</span>
+        <span className="trainer-toggle-text">
+          <b>Упражнения с трейнер</b>
+          <small>{withTrainer ? 'Включени в днешната тренировка' : 'Включи ги, ако трейнерът е под ръка'}</small>
+        </span>
+        <input
+          type="checkbox"
+          className="toggle toggle-secondary toggle-lg border-white/60 bg-white/15 text-white"
+          checked={withTrainer}
+          onChange={(e) => onWithTrainerChange(e.target.checked)}
+        />
+      </label>
+
       {groups.map((g) => (
         <section key={g.id} className="map-group" style={{ '--accent': g.color }}>
           <h2 className="map-group-title">
             <Face pose={g.pose} size={36} /> {g.title}
           </h2>
           <div className="map-path">
-            {exercises.map((ex, i) => {
+            {session.map((ex, i) => {
               if (ex.group !== g.id) return null
               const isDone = done.has(ex.id)
               const isCurrent = i === unlockedIndex
